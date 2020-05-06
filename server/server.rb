@@ -27,3 +27,26 @@ get '/players/:username' do |n|
     [].to_json
   end
 end
+
+post '/checkout_session' do
+  session = create_checkout_session
+
+  {"sessionId" => session["id"]}.to_json
+end
+
+def create_checkout_session
+  Stripe.api_key = 'sk_test_123'
+
+  Stripe::Checkout::Session.create(
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price: 'price_HE3ixi6tfxmGzu',
+        quantity: 1
+      }
+    ],
+    mode: 'payment',
+    success_url: 'http://localhost:3000',
+    cancel_url: 'http://localhost:3000',
+  )
+end
